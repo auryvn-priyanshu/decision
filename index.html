@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIVYA-DATA | AI Decision Probability Simulator</title>
+    <title>DIVYA-DATA | Vedic Decision Simulator</title>
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -11,19 +11,21 @@
             --blush-pink: #FCE7F3;
             --soft-lilac: #EDE9FE;
             --sky-blue: #E0F2FE;
+            --deep-purple: #4C1D95;
             --cream-white: #FFFBFA;
-            --text-dark: #334155;
+            --gold: #D97706;
+            --text-dark: #1E293B;
             --accent-gradient: linear-gradient(135deg, #F9A8D4, #C084FC);
-            --lavender-blue: linear-gradient(135deg, #A5B4FC, #818CF8);
-            --glass: rgba(255, 255, 255, 0.7);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --sans-gradient: linear-gradient(135deg, #818CF8, #4F46E5);
+            --glass: rgba(255, 255, 255, 0.85);
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
 
         body {
@@ -34,542 +36,565 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(0,0,0,0.02) 1px, transparent 0);
+            background-size: 40px 40px;
         }
 
-        /* Decorative Background Glows */
+        /* Decorative Background Elements */
         .glow {
             position: fixed;
-            width: 40vw;
-            height: 40vw;
+            width: 50vw;
+            height: 50vw;
             border-radius: 50%;
-            filter: blur(80px);
+            filter: blur(100px);
             z-index: -1;
-            opacity: 0.5;
-            animation: float 15s infinite alternate ease-in-out;
+            opacity: 0.4;
+            animation: float 20s infinite alternate ease-in-out;
         }
-
         .glow-1 { top: -10%; left: -10%; background: var(--blush-pink); }
         .glow-2 { bottom: -10%; right: -10%; background: var(--sky-blue); }
-        .glow-3 { top: 40%; right: 20%; background: var(--soft-lilac); }
+
+        .mandala-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            opacity: 0.03;
+            z-index: -1;
+            pointer-events: none;
+        }
 
         @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, 30px) scale(1.1); }
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(60px, 40px) rotate(10deg); }
         }
 
         header {
-            padding: 2rem 1rem;
+            padding: 3rem 1rem;
             text-align: center;
             width: 100%;
         }
 
         .logo {
-            font-weight: 800;
-            letter-spacing: 0.2rem;
-            color: #C084FC;
-            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.4rem;
+            color: var(--deep-purple);
+            font-size: 2rem;
             margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo::after {
+            content: "दिव्य-डेटा";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            font-size: 0.8rem;
+            letter-spacing: 0.8rem;
+            opacity: 0.5;
         }
 
         .tagline {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             opacity: 0.7;
-            text-transform: uppercase;
+            margin-top: 1.5rem;
+            font-style: italic;
         }
 
         main {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             padding: 1rem;
             flex-grow: 1;
         }
 
         .glass-card {
             background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 24px;
-            padding: 2.5rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 30px;
+            padding: 3rem;
             box-shadow: var(--shadow);
-            margin-bottom: 2rem;
-            transition: transform 0.3s ease;
+            margin-bottom: 3rem;
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             text-align: center;
-            margin-bottom: 2rem;
-            background: linear-gradient(to right, #6366f1, #d946ef);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 2.5rem;
+            color: var(--deep-purple);
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            gap: 2rem;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             .form-grid { grid-template-columns: 1fr; }
+            .glass-card { padding: 1.5rem; }
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.7rem;
         }
 
         label {
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-left: 0.5rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--deep-purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         input, select {
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(0,0,0,0.05);
-            background: rgba(255,255,255,0.8);
+            padding: 1.2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: white;
             font-size: 1rem;
             outline: none;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         input:focus, select:focus {
             border-color: #C084FC;
-            box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.1);
+            box-shadow: 0 0 0 5px rgba(192, 132, 252, 0.15);
         }
 
         .cta-btn {
             grid-column: 1 / -1;
-            margin-top: 1rem;
+            margin-top: 2rem;
             background: var(--accent-gradient);
             color: white;
             border: none;
-            padding: 1.2rem;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: 700;
+            padding: 1.5rem;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(249, 168, 212, 0.4);
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            box-shadow: 0 10px 25px rgba(249, 168, 212, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(249, 168, 212, 0.6);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(249, 168, 212, 0.6);
         }
 
-        /* Results Section */
+        /* Detailed Results Styling */
         #results-container {
             display: none;
-            animation: slideUp 0.6s ease-out;
+            animation: fadeIn 1s ease;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .result-header {
+        .prob-hero {
             text-align: center;
-            margin-bottom: 2rem;
+            padding: 2rem 0;
         }
 
-        .probability-circle {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: white;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
-            position: relative;
+        .sanskrit-title {
+            font-size: 1.2rem;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
-        .prob-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #C084FC;
-        }
-
-        .prob-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #94a3b8;
+        .prob-value-big {
+            font-size: 5rem;
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
         }
 
         .stat-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 20px;
+            padding: 2rem;
+            border-radius: 25px;
+            border: 1px solid var(--soft-lilac);
             text-align: center;
+            transition: transform 0.3s ease;
         }
 
-        .stat-val {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: block;
-            margin-bottom: 0.2rem;
+        .stat-card:hover { transform: translateY(-5px); }
+
+        .stat-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .stat-label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-data { font-size: 1.6rem; font-weight: 800; color: var(--deep-purple); display: block; }
+
+        .analysis-section {
+            margin-top: 3rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding-top: 2rem;
         }
 
-        .stat-name {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            text-transform: uppercase;
+        .analysis-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 25px;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            color: #334155;
+            position: relative;
+            overflow: hidden;
         }
 
-        .chart-container {
-            margin: 2rem 0;
-            height: 300px;
+        .analysis-box::before {
+            content: "ॐ";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 5rem;
+            opacity: 0.03;
+            color: var(--deep-purple);
         }
 
-        .insight-box {
-            background: linear-gradient(to bottom right, rgba(224, 242, 254, 0.5), rgba(252, 231, 243, 0.5));
-            border-left: 4px solid #F9A8D4;
-            padding: 1.5rem;
-            border-radius: 0 15px 15px 0;
-            margin-top: 1.5rem;
+        .analysis-box h3 {
+            color: var(--deep-purple);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .insight-box h3 {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
+        .analysis-text {
+            font-size: 1.05rem;
+            white-space: pre-line;
         }
 
-        .insight-box p {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #475569;
+        .remedy-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .remedy-item {
+            padding: 1rem;
+            background: var(--sky-blue);
+            margin-bottom: 0.8rem;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #0369a1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .loading-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,251,250,0.9);
-            z-index: 100;
+            inset: 0;
+            background: var(--cream-white);
+            z-index: 1000;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid var(--blush-pink);
-            border-top: 5px solid #C084FC;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .yantra-loader {
+            width: 120px;
+            height: 120px;
+            border: 4px solid var(--soft-lilac);
+            border-radius: 20%;
+            animation: rotateYantra 4s infinite linear;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes rotateYantra {
+            0% { transform: rotate(0deg); border-radius: 20%; }
+            50% { transform: rotate(180deg); border-radius: 50%; border-color: var(--blush-pink); }
+            100% { transform: rotate(360deg); border-radius: 20%; }
         }
 
-        footer {
-            padding: 2rem;
-            text-align: center;
-            font-size: 0.8rem;
-            opacity: 0.5;
-        }
-
-        .caution-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #FEE2E2;
-            color: #EF4444;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-top: 10px;
+        .chart-box {
+            height: 400px;
+            margin: 2rem 0;
         }
 
     </style>
 </head>
 <body>
 
+    <svg class="mandala-bg" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.5" />
+        <path d="M50 5 L55 45 L95 50 L55 55 L50 95 L45 55 L5 50 L45 45 Z" fill="none" stroke="currentColor" stroke-width="0.5" />
+    </svg>
+
     <div class="glow glow-1"></div>
     <div class="glow glow-2"></div>
-    <div class="glow glow-3"></div>
 
-    <div class="loading-overlay" id="loading">
-        <div class="spinner"></div>
-        <p style="margin-top: 1rem; font-weight: 600; color: #C084FC;">Scanning Cosmic Alignment...</p>
+    <div class="loading-overlay" id="loader">
+        <div class="yantra-loader">
+            <span style="font-size: 2rem;">ॐ</span>
+        </div>
+        <p style="margin-top: 2rem; letter-spacing: 4px; font-weight: 700; color: var(--deep-purple);">CONSULTING AKASHIC RECORDS...</p>
     </div>
 
     <header>
         <div class="logo">DIVYA-DATA</div>
-        <div class="tagline">Astrological Intelligence & Probabilistic Insights</div>
+        <p class="tagline">“Yato Dharmastato Jayah” — Where there is Dharma, there is Victory.</p>
     </header>
 
     <main>
-        <div class="glass-card">
-            <h1>Decision Probability Simulator</h1>
-            <form id="simulatorForm" class="form-grid">
+        <div class="glass-card" id="form-card">
+            <h1>Sankalpa Simulation</h1>
+            <form id="vedicForm" class="form-grid">
                 <div class="input-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" placeholder="E.g. Alex" required>
+                    <label>Jataka Name (Name)</label>
+                    <input type="text" id="name" placeholder="Enter full name" required>
                 </div>
                 <div class="input-group">
-                    <label for="birthDate">Birth Date</label>
+                    <label>Janma Tithi (Birth Date)</label>
                     <input type="date" id="birthDate" required>
                 </div>
                 <div class="input-group">
-                    <label for="birthTime">Birth Time</label>
-                    <input type="time" id="birthTime" value="12:00">
+                    <label>Janma Samaya (Birth Time)</label>
+                    <input type="time" id="birthTime" value="06:00">
                 </div>
                 <div class="input-group">
-                    <label for="decision">Decision Focus</label>
-                    <select id="decision" required>
-                        <option value="career">Job Change / Career Leap</option>
-                        <option value="startup">Founding a Startup</option>
-                        <option value="relationship">Marriage / Commitment</option>
-                        <option value="finance">Big Ticket Investment</option>
+                    <label>Karma Path (Decision)</label>
+                    <select id="decision">
+                        <option value="career">Artha: Career & Professional Shift</option>
+                        <option value="startup">Srishti: Launching New Venture</option>
+                        <option value="marriage">Vivaha: Lifelong Union</option>
+                        <option value="investment">Lakshmi: High-Stake Wealth Allocation</option>
+                        <option value="relocation">Pravasa: Global Relocation</option>
                     </select>
                 </div>
-                <button type="submit" class="cta-btn">
-                    Calculate Success Probability
-                </button>
+                <button type="submit" class="cta-btn">Invoke Cosmic Analysis</button>
             </form>
         </div>
 
         <div id="results-container">
             <div class="glass-card">
-                <div class="result-header">
-                    <div class="probability-circle" id="probCircle">
-                        <span class="prob-value" id="result-probability">0%</span>
-                        <span class="prob-label">Success Chance</span>
-                    </div>
-                    <h2 id="result-title">Analyzing Your Path...</h2>
+                <div class="prob-hero">
+                    <span class="sanskrit-title">Siddhi Sambhavana</span>
+                    <div class="prob-value-big" id="main-prob">0%</div>
+                    <p style="font-weight: 700; color: #64748b; margin-top: 10px;">PROBABILITY OF SUCCESSFUL MANIFESTATION</p>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <span class="stat-val" id="result-readiness">0%</span>
-                        <span class="stat-name">Emotional Readiness</span>
+                        <span class="stat-icon">🪐</span>
+                        <span class="stat-label">Graha Bala</span>
+                        <span class="stat-data" id="stat-planetary">0/10</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-val" id="result-planetary">0/10</span>
-                        <span class="stat-name">Planetary Strength</span>
+                        <span class="stat-icon">🔥</span>
+                        <span class="stat-label">Atma Shakti</span>
+                        <span class="stat-data" id="stat-readiness">0%</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">⏳</span>
+                        <span class="stat-label">Current Dasha</span>
+                        <span class="stat-data" id="stat-dasha">Loading...</span>
                     </div>
                 </div>
 
-                <div class="chart-container">
-                    <canvas id="factorChart"></canvas>
+                <div class="chart-box">
+                    <canvas id="vedicChart"></canvas>
                 </div>
 
-                <div class="insight-box">
-                    <h3>Timing Advice</h3>
-                    <p id="result-timing">The cosmic window for this move is currently transitioning.</p>
+                <div class="analysis-section">
+                    <div class="analysis-box">
+                        <h3><span style="color: var(--gold);">◈</span> Detailed Karmic Analysis</h3>
+                        <div class="analysis-text" id="long-analysis"></div>
+                    </div>
+
+                    <div class="analysis-box">
+                        <h3><span style="color: var(--gold);">◈</span> Kaala Purusha Timing Advice</h3>
+                        <div class="analysis-text" id="long-timing"></div>
+                    </div>
+
+                    <div class="analysis-box" style="background: #FFFBEB; border: 1px solid #FDE68A;">
+                        <h3><span style="color: #B45309;">◈</span> Upaya (Spiritual Remedies)</h3>
+                        <p style="margin-bottom: 1rem; font-style: italic;">To harmonize planetary friction and enhance the probability of success:</p>
+                        <div class="remedy-list" id="remedy-list"></div>
+                    </div>
                 </div>
 
-                <div class="insight-box" style="border-left-color: #A5B4FC;">
-                    <h3>Risk Assessment</h3>
-                    <p id="result-risk">Detailed risk metrics based on your Current Dasha (Age-Cycle).</p>
-                    <div id="risk-tags"></div>
-                </div>
-
-                <button class="cta-btn" style="background: var(--lavender-blue); margin-top: 2rem;" onclick="location.reload()">
-                    Run Another Simulation
-                </button>
+                <button class="cta-btn" style="background: var(--sans-gradient); margin-top: 2rem;" onclick="location.reload()">Reset Sankalpa</button>
             </div>
         </div>
     </main>
 
     <footer>
-        &copy; 2025 DIVYA-DATA. Spiritual algorithms for a digital age.
+        &copy; 2025 DIVYA-DATA | Advanced Jyotish Computational Engine v3.0
     </footer>
 
     <script>
-        const form = document.getElementById('simulatorForm');
-        const loader = document.getElementById('loading');
+        const form = document.getElementById('vedicForm');
+        const loader = document.getElementById('loader');
         const results = document.getElementById('results-container');
-        let chartInstance = null;
+        let vChart = null;
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             loader.style.display = 'flex';
             
-            // Artificial delay for "calculation" feel
             setTimeout(() => {
-                const data = {
+                const inputs = {
                     name: document.getElementById('name').value,
                     dob: document.getElementById('birthDate').value,
                     time: document.getElementById('birthTime').value,
                     decision: document.getElementById('decision').value
                 };
 
-                const output = calculateAstrology(data);
-                displayResults(output);
+                const report = generateVedicReport(inputs);
+                renderReport(report);
                 
                 loader.style.display = 'none';
-                form.parentElement.style.display = 'none';
+                document.getElementById('form-card').style.display = 'none';
                 results.style.display = 'block';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 2000);
+            }, 3000);
         });
 
-        /**
-         * Core Astrological Logic Engine
-         * Uses pseudo-astronomy based on birth date cycles
-         */
-        function calculateAstrology(data) {
-            const birthDate = new Date(data.dob);
+        function generateVedicReport(data) {
+            const birth = new Date(data.dob + 'T' + data.time);
             const now = new Date();
-            
-            // 1. Planetary Strength Logic (Based on Sun/Moon cycles from birth)
-            const daysSinceBirth = Math.floor((now - birthDate) / (1000 * 60 * 60 * 24));
-            const age = daysSinceBirth / 365.25;
-            
-            // Simplified "Dasha" Cycle (Vedic Astrology uses 120 year cycle)
-            // Each planet rules a block of years
-            const dashaCycles = [
-                { planet: 'Ketu', years: 7, risk: 0.6 },
-                { planet: 'Venus', years: 20, risk: 0.2 },
-                { planet: 'Sun', years: 6, risk: 0.3 },
-                { planet: 'Moon', years: 10, risk: 0.1 },
-                { planet: 'Mars', years: 7, risk: 0.7 },
-                { planet: 'Rahu', years: 18, risk: 0.8 },
-                { planet: 'Jupiter', years: 16, risk: 0.1 },
-                { planet: 'Saturn', years: 19, risk: 0.4 },
-                { planet: 'Mercury', years: 17, risk: 0.2 }
+            const ageDays = (now - birth) / (1000 * 60 * 60 * 24);
+            const ageYears = ageDays / 365.25;
+
+            // 1. Precise Dasha Logic
+            const dashas = [
+                { n: 'Ketu', d: 7, desc: 'Internal transformation & spiritual debt clearance.', element: 'Fire' },
+                { n: 'Shukra (Venus)', d: 20, desc: 'Material abundance, luxury, and relationship growth.', element: 'Water' },
+                { n: 'Surya (Sun)', d: 6, desc: 'Authority, soul-purpose, and leadership emergence.', element: 'Fire' },
+                { n: 'Chandra (Moon)', d: 10, desc: 'Emotional tides, public life, and mental peace.', element: 'Water' },
+                { n: 'Mangal (Mars)', d: 7, desc: 'Courage, ambition, but prone to conflict.', element: 'Fire' },
+                { n: 'Rahu', d: 18, desc: 'Obsessive growth, unconventional paths, and foreign gains.', element: 'Air' },
+                { n: 'Guru (Jupiter)', d: 16, desc: 'Wisdom, expansion, and divine protection.', element: 'Space' },
+                { n: 'Shani (Saturn)', d: 19, desc: 'Discipline, delays, and structural foundations.', element: 'Air' },
+                { n: 'Budha (Mercury)', d: 17, desc: 'Intellect, commerce, and communication.', element: 'Earth' }
             ];
 
-            let cumulativeYears = 0;
-            let currentPlanet = dashaCycles[0];
-            const ageInCycle = age % 120;
-
-            for (let d of dashaCycles) {
-                cumulativeYears += d.years;
-                if (ageInCycle <= cumulativeYears) {
-                    currentPlanet = d;
+            let cyclePoint = ageYears % 120;
+            let currentDasha = dashas[0];
+            let accumulated = 0;
+            for(let d of dashas) {
+                accumulated += d.d;
+                if(cyclePoint <= accumulated) {
+                    currentDasha = d;
                     break;
                 }
             }
 
-            // 2. Decision Multipliers
-            const decisionMap = {
-                career: { planets: ['Sun', 'Mercury', 'Saturn'], base: 65 },
-                startup: { planets: ['Mars', 'Rahu', 'Jupiter'], base: 45 },
-                relationship: { planets: ['Venus', 'Moon', 'Jupiter'], base: 70 },
-                finance: { planets: ['Jupiter', 'Mercury', 'Venus'], base: 55 }
+            // 2. Numerical Entropy for "Accuracy"
+            const nameEntropy = data.name.length % 10;
+            const hourEntropy = parseInt(data.time.split(':')[0]);
+            
+            // 3. Calculation of Factors
+            const planetaryStrength = Math.min(10, Math.max(2, Math.floor(((Math.sin(ageDays / 28) + 1) * 4) + (nameEntropy / 3))));
+            const atmaShakti = Math.min(100, Math.max(10, Math.floor(((Math.cos(ageYears / 7) + 1) * 45) + (hourEntropy))));
+            
+            const decisionWeights = {
+                career: { base: 60, focus: 'Artha (Wealth)', planet: 'Saturn' },
+                startup: { base: 45, focus: 'Srishti (Creation)', planet: 'Mars' },
+                marriage: { base: 70, focus: 'Kama (Desire)', planet: 'Venus' },
+                investment: { base: 55, focus: 'Lakshmi (Fortune)', planet: 'Jupiter' },
+                relocation: { base: 50, focus: 'Pravasa (Travel)', planet: 'Rahu' }
             };
 
-            const config = decisionMap[data.decision];
-            
-            // Calculate scores
-            // Entropy based on birth time minutes for uniqueness
-            const [hours, minutes] = data.time.split(':').map(Number);
-            const entropy = (minutes / 60) + (hours / 24);
-            
-            const planetaryScore = Math.floor(((Math.sin(daysSinceBirth / 30) + 1) * 4) + (entropy * 2));
-            const readiness = Math.floor(((Math.cos(age / 5) + 1) * 40) + 20);
-            
-            // Probability formula
-            let probability = config.base + (planetaryScore * 3) - (currentPlanet.risk * 20) + (readiness / 10);
-            probability = Math.min(98, Math.max(5, Math.round(probability)));
+            const weight = decisionWeights[data.decision];
+            let finalProb = weight.base + (planetaryStrength * 3) + (atmaShakti / 10) - (currentDasha.n === 'Shani' ? 5 : 0);
+            finalProb = Math.min(99, Math.round(finalProb));
 
-            // Factors for Chart
-            const chartData = {
-                labels: ['Planetary Support', 'Emotional Alignment', 'Market Karma', 'Effort/Skill', 'Luck Factor'],
-                values: [
-                    planetaryScore * 10,
-                    readiness,
-                    70 + (entropy * 20),
-                    60 + (Math.random() * 20),
-                    40 + (planetaryScore * 5)
-                ]
-            };
+            // 4. Generate Long-Form Analysis
+            const analysis = `Based on your Janma Kundali cycle, you are currently traversing the ${currentDasha.n} Mahadasha. ${currentDasha.desc} 
 
-            // Timing Insights
-            let timing = "";
-            if (probability > 80) {
-                timing = "The Golden Window is open. Your current Dasha in " + currentPlanet.planet + " phase supports bold steps. Mercury is aligned for clarity.";
-            } else if (probability > 60) {
-                timing = "A favorable transition. Start preparations now, but wait for the waxing moon phase next month for final execution.";
-            } else {
-                timing = "Current planetary friction suggests a delay. Focus on internal audits and emotional stability until the " + currentPlanet.planet + " phase stabilizes.";
-            }
+Regarding your intent for ${weight.focus}, the cosmic alignment suggests that your personal Atma Shakti (Soul Force) is at ${atmaShakti}%. This indicates a ${atmaShakti > 70 ? 'strong internal readiness' : 'period of internal hesitation'} where your subconscious mind is ${atmaShakti > 70 ? 'perfectly synced' : 'partially misaligned'} with your external goals.
 
-            const risks = [];
-            if (currentPlanet.risk > 0.5) risks.push("High Volatility Period");
-            if (readiness < 40) risks.push("Emotional Burnout Risk");
-            if (planetaryScore < 4) risks.push("Communication Gaps");
+The presiding deity of this decision is ${weight.planet}. Since your Graha Bala is ${planetaryStrength}/10, you are experiencing ${planetaryStrength > 7 ? 'maximum support from the environment' : 'moderate resistance from external factors'}. You must focus on the Tattva of ${currentDasha.element} to balance your current energy field.
+
+In Vedic terms, this is the time for ${finalProb > 70 ? 'Dharma-Yuddha (Righteous Action)' : 'Tapasya (Contemplation and Preparation)'}. Proceeding now would result in a ${finalProb}% probability of the desired fruit (Phala).`;
+
+            const timing = `The current transit of planets indicates that the 'Muhurta' (timing) for this ${data.decision} is ${finalProb > 65 ? 'entering a Peak Phase' : 'in a Restrictive Phase'}. 
+
+Critical Window: The next 45 to 90 days are vital. 
+- Avoid actions during the 'Rahu Kaal' on Tuesdays and Saturdays.
+- The most auspicious day for you to sign documents or commit is Thursday (Guru-Var), particularly during the Shukla Paksha (Waxing Moon).
+- Beware of 'Mercury Retrograde' cycles which may cloud your ${weight.planet} influence, leading to contract reversals or communication breakdowns.`;
+
+            const remedies = [
+                `Chant the 'Bija Mantra' for ${weight.planet} 108 times every morning.`,
+                `Wear shades of ${currentDasha.element === 'Fire' ? 'Saffron or Red' : 'Cream or Sky Blue'} to resonate with the current Dasha.`,
+                `Offer ${data.decision === 'finance' ? 'yellow flowers to a deity' : 'water to the rising sun'} on Sundays.`,
+                `Practice 'Mauna' (silence) for 30 minutes daily to increase Atma Shakti.`
+            ];
 
             return {
-                probability,
-                readiness,
-                planetaryScore,
+                name: data.name,
+                probability: finalProb,
+                strength: planetaryStrength,
+                readiness: atmaShakti,
+                dasha: currentDasha.n,
+                analysis,
                 timing,
-                planet: currentPlanet.planet,
-                chartData,
-                risks
+                remedies,
+                chartValues: [planetaryStrength * 10, atmaShakti, 65 + (nameEntropy * 3), 50 + (hourEntropy * 2), finalProb]
             };
         }
 
-        function displayResults(output) {
-            document.getElementById('result-probability').innerText = output.probability + '%';
-            document.getElementById('result-readiness').innerText = output.readiness + '%';
-            document.getElementById('result-planetary').innerText = output.planetaryScore + '/10';
-            document.getElementById('result-timing').innerText = output.timing;
-            
-            const riskContainer = document.getElementById('risk-tags');
-            riskContainer.innerHTML = '';
-            output.risks.forEach(r => {
-                const tag = document.createElement('span');
-                tag.className = 'caution-tag';
-                tag.innerText = '⚠️ ' + r;
-                tag.style.marginRight = '10px';
-                riskContainer.appendChild(tag);
+        function renderReport(report) {
+            document.getElementById('main-prob').innerText = report.probability + '%';
+            document.getElementById('stat-planetary').innerText = report.strength + '/10';
+            document.getElementById('stat-readiness').innerText = report.readiness + '%';
+            document.getElementById('stat-dasha').innerText = report.dasha;
+            document.getElementById('long-analysis').innerText = report.analysis;
+            document.getElementById('long-timing').innerText = report.timing;
+
+            const remList = document.getElementById('remedy-list');
+            remList.innerHTML = '';
+            report.remedies.forEach(r => {
+                const item = document.createElement('div');
+                item.className = 'remedy-item';
+                item.innerHTML = `<span>✨</span> ${r}`;
+                remList.appendChild(item);
             });
 
-            if (output.probability > 75) {
-                document.getElementById('result-title').innerText = "Cosmic Green Light!";
-                document.getElementById('probCircle').style.boxShadow = "0 0 30px rgba(165, 180, 252, 0.5)";
-            } else if (output.probability > 50) {
-                document.getElementById('result-title').innerText = "Cautiously Optimistic";
-            } else {
-                document.getElementById('result-title').innerText = "Cosmic Contemplation";
-            }
+            // Charting
+            const ctx = document.getElementById('vedicChart').getContext('2d');
+            if (vChart) vChart.destroy();
 
-            // Initialize Chart
-            const ctx = document.getElementById('factorChart').getContext('2d');
-            if (chartInstance) chartInstance.destroy();
-
-            chartInstance = new Chart(ctx, {
+            vChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: output.chartData.labels,
+                    labels: ['Graha Bala', 'Atma Shakti', 'Karma Accumulation', 'Kaala (Time)', 'Siddhi (Success)'],
                     datasets: [{
-                        label: 'Alignment Score',
-                        data: output.chartData.values,
-                        backgroundColor: 'rgba(249, 168, 212, 0.3)',
+                        data: report.chartValues,
+                        backgroundColor: 'rgba(192, 132, 252, 0.2)',
                         borderColor: '#C084FC',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#C084FC'
+                        borderWidth: 3,
+                        pointBackgroundColor: '#4C1D95',
+                        pointRadius: 5
                     }]
                 },
                 options: {
@@ -577,15 +602,14 @@
                     maintainAspectRatio: false,
                     scales: {
                         r: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: { display: false },
-                            grid: { color: 'rgba(0,0,0,0.05)' }
+                            angleLines: { color: 'rgba(0,0,0,0.1)' },
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false }
                         }
                     },
-                    plugins: {
-                        legend: { display: false }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
         }
