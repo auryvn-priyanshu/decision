@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIVYA-DATA | AI Decision Probability Simulator</title>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --blush-pink: #FCE7F3;
+            --soft-lilac: #EDE9FE;
+            --sky-blue: #E0F2FE;
+            --cream-white: #FFFBFA;
+            --text-dark: #334155;
+            --accent-gradient: linear-gradient(135deg, #F9A8D4, #C084FC);
+            --lavender-blue: linear-gradient(135deg, #A5B4FC, #818CF8);
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--cream-white);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Decorative Background Glows */
+        .glow {
+            position: fixed;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: float 15s infinite alternate ease-in-out;
+        }
+
+        .glow-1 { top: -10%; left: -10%; background: var(--blush-pink); }
+        .glow-2 { bottom: -10%; right: -10%; background: var(--sky-blue); }
+        .glow-3 { top: 40%; right: 20%; background: var(--soft-lilac); }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 30px) scale(1.1); }
+        }
+
+        header {
+            padding: 2rem 1rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .logo {
+            font-weight: 800;
+            letter-spacing: 0.2rem;
+            color: #C084FC;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        main {
+            width: 100%;
+            max-width: 800px;
+            padding: 1rem;
+            flex-grow: 1;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #6366f1, #d946ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-left: 0.5rem;
+        }
+
+        input, select {
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.8);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #C084FC;
+            box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.1);
+        }
+
+        .cta-btn {
+            grid-column: 1 / -1;
+            margin-top: 1rem;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(249, 168, 212, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 168, 212, 0.6);
+        }
+
+        /* Results Section */
+        #results-container {
+            display: none;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .probability-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .prob-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #C084FC;
+        }
+
+        .prob-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-name {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .chart-container {
+            margin: 2rem 0;
+            height: 300px;
+        }
+
+        .insight-box {
+            background: linear-gradient(to bottom right, rgba(224, 242, 254, 0.5), rgba(252, 231, 243, 0.5));
+            border-left: 4px solid #F9A8D4;
+            padding: 1.5rem;
+            border-radius: 0 15px 15px 0;
+            margin-top: 1.5rem;
+        }
+
+        .insight-box h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-box p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,251,250,0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--blush-pink);
+            border-top: 5px solid #C084FC;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        .caution-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #FEE2E2;
+            color: #EF4444;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+        <p style="margin-top: 1rem; font-weight: 600; color: #C084FC;">Scanning Cosmic Alignment...</p>
+    </div>
+
+    <header>
+        <div class="logo">DIVYA-DATA</div>
+        <div class="tagline">Astrological Intelligence & Probabilistic Insights</div>
+    </header>
+
+    <main>
+        <div class="glass-card">
+            <h1>Decision Probability Simulator</h1>
+            <form id="simulatorForm" class="form-grid">
+                <div class="input-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="E.g. Alex" required>
+                </div>
+                <div class="input-group">
+                    <label for="birthDate">Birth Date</label>
+                    <input type="date" id="birthDate" required>
+                </div>
+                <div class="input-group">
+                    <label for="birthTime">Birth Time</label>
+                    <input type="time" id="birthTime" value="12:00">
+                </div>
+                <div class="input-group">
+                    <label for="decision">Decision Focus</label>
+                    <select id="decision" required>
+                        <option value="career">Job Change / Career Leap</option>
+                        <option value="startup">Founding a Startup</option>
+                        <option value="relationship">Marriage / Commitment</option>
+                        <option value="finance">Big Ticket Investment</option>
+                    </select>
+                </div>
+                <button type="submit" class="cta-btn">
+                    Calculate Success Probability
+                </button>
+            </form>
+        </div>
+
+        <div id="results-container">
+            <div class="glass-card">
+                <div class="result-header">
+                    <div class="probability-circle" id="probCircle">
+                        <span class="prob-value" id="result-probability">0%</span>
+                        <span class="prob-label">Success Chance</span>
+                    </div>
+                    <h2 id="result-title">Analyzing Your Path...</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-val" id="result-readiness">0%</span>
+                        <span class="stat-name">Emotional Readiness</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-val" id="result-planetary">0/10</span>
+                        <span class="stat-name">Planetary Strength</span>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="factorChart"></canvas>
+                </div>
+
+                <div class="insight-box">
+                    <h3>Timing Advice</h3>
+                    <p id="result-timing">The cosmic window for this move is currently transitioning.</p>
+                </div>
+
+                <div class="insight-box" style="border-left-color: #A5B4FC;">
+                    <h3>Risk Assessment</h3>
+                    <p id="result-risk">Detailed risk metrics based on your Current Dasha (Age-Cycle).</p>
+                    <div id="risk-tags"></div>
+                </div>
+
+                <button class="cta-btn" style="background: var(--lavender-blue); margin-top: 2rem;" onclick="location.reload()">
+                    Run Another Simulation
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 DIVYA-DATA. Spiritual algorithms for a digital age.
+    </footer>
+
+    <script>
+        const form = document.getElementById('simulatorForm');
+        const loader = document.getElementById('loading');
+        const results = document.getElementById('results-container');
+        let chartInstance = null;
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            loader.style.display = 'flex';
+            
+            // Artificial delay for "calculation" feel
+            setTimeout(() => {
+                const data = {
+                    name: document.getElementById('name').value,
+                    dob: document.getElementById('birthDate').value,
+                    time: document.getElementById('birthTime').value,
+                    decision: document.getElementById('decision').value
+                };
+
+                const output = calculateAstrology(data);
+                displayResults(output);
+                
+                loader.style.display = 'none';
+                form.parentElement.style.display = 'none';
+                results.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 2000);
+        });
+
+        /**
+         * Core Astrological Logic Engine
+         * Uses pseudo-astronomy based on birth date cycles
+         */
+        function calculateAstrology(data) {
+            const birthDate = new Date(data.dob);
+            const now = new Date();
+            
+            // 1. Planetary Strength Logic (Based on Sun/Moon cycles from birth)
+            const daysSinceBirth = Math.floor((now - birthDate) / (1000 * 60 * 60 * 24));
+            const age = daysSinceBirth / 365.25;
+            
+            // Simplified "Dasha" Cycle (Vedic Astrology uses 120 year cycle)
+            // Each planet rules a block of years
+            const dashaCycles = [
+                { planet: 'Ketu', years: 7, risk: 0.6 },
+                { planet: 'Venus', years: 20, risk: 0.2 },
+                { planet: 'Sun', years: 6, risk: 0.3 },
+                { planet: 'Moon', years: 10, risk: 0.1 },
+                { planet: 'Mars', years: 7, risk: 0.7 },
+                { planet: 'Rahu', years: 18, risk: 0.8 },
+                { planet: 'Jupiter', years: 16, risk: 0.1 },
+                { planet: 'Saturn', years: 19, risk: 0.4 },
+                { planet: 'Mercury', years: 17, risk: 0.2 }
+            ];
+
+            let cumulativeYears = 0;
+            let currentPlanet = dashaCycles[0];
+            const ageInCycle = age % 120;
+
+            for (let d of dashaCycles) {
+                cumulativeYears += d.years;
+                if (ageInCycle <= cumulativeYears) {
+                    currentPlanet = d;
+                    break;
+                }
+            }
+
+            // 2. Decision Multipliers
+            const decisionMap = {
+                career: { planets: ['Sun', 'Mercury', 'Saturn'], base: 65 },
+                startup: { planets: ['Mars', 'Rahu', 'Jupiter'], base: 45 },
+                relationship: { planets: ['Venus', 'Moon', 'Jupiter'], base: 70 },
+                finance: { planets: ['Jupiter', 'Mercury', 'Venus'], base: 55 }
+            };
+
+            const config = decisionMap[data.decision];
+            
+            // Calculate scores
+            // Entropy based on birth time minutes for uniqueness
+            const [hours, minutes] = data.time.split(':').map(Number);
+            const entropy = (minutes / 60) + (hours / 24);
+            
+            const planetaryScore = Math.floor(((Math.sin(daysSinceBirth / 30) + 1) * 4) + (entropy * 2));
+            const readiness = Math.floor(((Math.cos(age / 5) + 1) * 40) + 20);
+            
+            // Probability formula
+            let probability = config.base + (planetaryScore * 3) - (currentPlanet.risk * 20) + (readiness / 10);
+            probability = Math.min(98, Math.max(5, Math.round(probability)));
+
+            // Factors for Chart
+            const chartData = {
+                labels: ['Planetary Support', 'Emotional Alignment', 'Market Karma', 'Effort/Skill', 'Luck Factor'],
+                values: [
+                    planetaryScore * 10,
+                    readiness,
+                    70 + (entropy * 20),
+                    60 + (Math.random() * 20),
+                    40 + (planetaryScore * 5)
+                ]
+            };
+
+            // Timing Insights
+            let timing = "";
+            if (probability > 80) {
+                timing = "The Golden Window is open. Your current Dasha in " + currentPlanet.planet + " phase supports bold steps. Mercury is aligned for clarity.";
+            } else if (probability > 60) {
+                timing = "A favorable transition. Start preparations now, but wait for the waxing moon phase next month for final execution.";
+            } else {
+                timing = "Current planetary friction suggests a delay. Focus on internal audits and emotional stability until the " + currentPlanet.planet + " phase stabilizes.";
+            }
+
+            const risks = [];
+            if (currentPlanet.risk > 0.5) risks.push("High Volatility Period");
+            if (readiness < 40) risks.push("Emotional Burnout Risk");
+            if (planetaryScore < 4) risks.push("Communication Gaps");
+
+            return {
+                probability,
+                readiness,
+                planetaryScore,
+                timing,
+                planet: currentPlanet.planet,
+                chartData,
+                risks
+            };
+        }
+
+        function displayResults(output) {
+            document.getElementById('result-probability').innerText = output.probability + '%';
+            document.getElementById('result-readiness').innerText = output.readiness + '%';
+            document.getElementById('result-planetary').innerText = output.planetaryScore + '/10';
+            document.getElementById('result-timing').innerText = output.timing;
+            
+            const riskContainer = document.getElementById('risk-tags');
+            riskContainer.innerHTML = '';
+            output.risks.forEach(r => {
+                const tag = document.createElement('span');
+                tag.className = 'caution-tag';
+                tag.innerText = '⚠️ ' + r;
+                tag.style.marginRight = '10px';
+                riskContainer.appendChild(tag);
+            });
+
+            if (output.probability > 75) {
+                document.getElementById('result-title').innerText = "Cosmic Green Light!";
+                document.getElementById('probCircle').style.boxShadow = "0 0 30px rgba(165, 180, 252, 0.5)";
+            } else if (output.probability > 50) {
+                document.getElementById('result-title').innerText = "Cautiously Optimistic";
+            } else {
+                document.getElementById('result-title').innerText = "Cosmic Contemplation";
+            }
+
+            // Initialize Chart
+            const ctx = document.getElementById('factorChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: output.chartData.labels,
+                    datasets: [{
+                        label: 'Alignment Score',
+                        data: output.chartData.values,
+                        backgroundColor: 'rgba(249, 168, 212, 0.3)',
+                        borderColor: '#C084FC',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#C084FC'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { display: false },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
